@@ -11,6 +11,7 @@
 		CECCD7C22C26664D00B16DFC /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = CECCD7C12C26664D00B16DFC /* FirebaseFirestore */; };
 		CECCD7C42C26664D00B16DFC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = CECCD7C32C26664D00B16DFC /* FirebaseStorage */; };
 		CECCD7CC2C2668F300B16DFC /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCD7CB2C2668F300B16DFC /* LoginView.swift */; };
+		CECCD7D12C26919C00B16DFC /* MainMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCD7D02C26919C00B16DFC /* MainMessagesView.swift */; };
 		CEF73F6B2C0AD44F002FD5EE /* ChatDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF73F6A2C0AD44F002FD5EE /* ChatDemoApp.swift */; };
 		CEF73F6F2C0AD452002FD5EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEF73F6E2C0AD452002FD5EE /* Assets.xcassets */; };
 		CEF73F722C0AD452002FD5EE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEF73F712C0AD452002FD5EE /* Preview Assets.xcassets */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		CECCD7CB2C2668F300B16DFC /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		CECCD7D02C26919C00B16DFC /* MainMessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMessagesView.swift; sourceTree = "<group>"; };
 		CEF73F672C0AD44F002FD5EE /* ChatDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEF73F6A2C0AD44F002FD5EE /* ChatDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDemoApp.swift; sourceTree = "<group>"; };
 		CEF73F6E2C0AD452002FD5EE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -42,6 +44,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CECCD7CD2C26913800B16DFC /* MainMessages */ = {
+			isa = PBXGroup;
+			children = (
+				CECCD7D02C26919C00B16DFC /* MainMessagesView.swift */,
+			);
+			path = MainMessages;
+			sourceTree = "<group>";
+		};
 		CEF73F5E2C0AD44F002FD5EE = {
 			isa = PBXGroup;
 			children = (
@@ -61,6 +71,7 @@
 		CEF73F692C0AD44F002FD5EE /* ChatDemo */ = {
 			isa = PBXGroup;
 			children = (
+				CECCD7CD2C26913800B16DFC /* MainMessages */,
 				CEF73F6A2C0AD44F002FD5EE /* ChatDemoApp.swift */,
 				CEF73F7B2C0DB889002FD5EE /* GoogleService-Info.plist */,
 				CEF73F7D2C0F09E6002FD5EE /* ImagePicker.swift */,
@@ -159,6 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CECCD7CC2C2668F300B16DFC /* LoginView.swift in Sources */,
+				CECCD7D12C26919C00B16DFC /* MainMessagesView.swift in Sources */,
 				CEF73F7E2C0F09E6002FD5EE /* ImagePicker.swift in Sources */,
 				CEF73F6B2C0AD44F002FD5EE /* ChatDemoApp.swift in Sources */,
 			);

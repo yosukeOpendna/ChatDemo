@@ -14,7 +14,7 @@ import FirebaseFirestore
 //    static let shared = FirebaseManageer()
 //    override init() {
 //        FirebaseApp.configure()
-//        self.auth = Auth.auth() 
+//        self.auth = Auth.auth()
 //        super.init()
 //    }
 //}
@@ -168,9 +168,26 @@ struct LoginView: View {
     
                     self.loginStatusMessage = "Successfully stored image with url: \(url?.absoluteString ?? "")"
                     print(url?.absoluteString)
+                    guard let url = url else { return }
+                    self.storeUserInformation(imageProfileUrl: url)
                 }
             }
         }
+    private func storeUserInformation(imageProfileUrl: URL){
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        let userData = [ "email": self.email, "uid": uid, "profileImageUrl": imageProfileUrl.absoluteString]
+        Firestore.firestore().collection("users")
+            .document(uid).setData(userData){ err in
+                if let err = err {
+                    print(err)
+                    self.loginStatusMessage = "\(err)"
+                    return
+                }
+                print("Success")
+            }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
