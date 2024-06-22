@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
-
+import Firebase
+import FirebaseStorage
 @main
 struct ChatDemoApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginView()
         }
     }
 }
