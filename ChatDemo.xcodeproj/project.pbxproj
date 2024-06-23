@@ -13,8 +13,8 @@
 		CECCD7CC2C2668F300B16DFC /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCD7CB2C2668F300B16DFC /* LoginView.swift */; };
 		CECCD7D12C26919C00B16DFC /* MainMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CECCD7D02C26919C00B16DFC /* MainMessagesView.swift */; };
 		CECCD7D42C26BB2800B16DFC /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = CECCD7D32C26BB2800B16DFC /* SDWebImageSwiftUI */; };
-		CECCD7D62C27F02500B16DFC /* Model in Resources */ = {isa = PBXBuildFile; fileRef = CECCD7D52C27F02400B16DFC /* Model */; };
 		CECCD7DA2C28139900B16DFC /* NewMessage in Resources */ = {isa = PBXBuildFile; fileRef = CECCD7D92C28139900B16DFC /* NewMessage */; };
+		CECCD7DB2C281DFE00B16DFC /* Models in Resources */ = {isa = PBXBuildFile; fileRef = CECCD7D52C27F02400B16DFC /* Models */; };
 		CEF73F6B2C0AD44F002FD5EE /* ChatDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF73F6A2C0AD44F002FD5EE /* ChatDemoApp.swift */; };
 		CEF73F6F2C0AD452002FD5EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEF73F6E2C0AD452002FD5EE /* Assets.xcassets */; };
 		CEF73F722C0AD452002FD5EE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEF73F712C0AD452002FD5EE /* Preview Assets.xcassets */; };
@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		CECCD7CB2C2668F300B16DFC /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		CECCD7D02C26919C00B16DFC /* MainMessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMessagesView.swift; sourceTree = "<group>"; };
-		CECCD7D52C27F02400B16DFC /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Model; sourceTree = "<group>"; };
+		CECCD7D52C27F02400B16DFC /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Models; sourceTree = "<group>"; };
 		CECCD7D92C28139900B16DFC /* NewMessage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = NewMessage; sourceTree = "<group>"; };
 		CEF73F672C0AD44F002FD5EE /* ChatDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEF73F6A2C0AD44F002FD5EE /* ChatDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDemoApp.swift; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 		CEF73F692C0AD44F002FD5EE /* ChatDemo */ = {
 			isa = PBXGroup;
 			children = (
-				CECCD7D52C27F02400B16DFC /* Model */,
+				CECCD7D52C27F02400B16DFC /* Models */,
 				CECCD7CD2C26913800B16DFC /* MainMessages */,
 				CEF73F6A2C0AD44F002FD5EE /* ChatDemoApp.swift */,
 				CEF73F7B2C0DB889002FD5EE /* GoogleService-Info.plist */,
@@ -166,9 +166,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CECCD7DB2C281DFE00B16DFC /* Models in Resources */,
 				CEF73F722C0AD452002FD5EE /* Preview Assets.xcassets in Resources */,
 				CEF73F6F2C0AD452002FD5EE /* Assets.xcassets in Resources */,
-				CECCD7D62C27F02500B16DFC /* Model in Resources */,
 				CECCD7DA2C28139900B16DFC /* NewMessage in Resources */,
 				CEF73F7C2C0DB889002FD5EE /* GoogleService-Info.plist in Resources */,
 			);

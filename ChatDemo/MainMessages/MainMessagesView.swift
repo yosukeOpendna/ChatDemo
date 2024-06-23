@@ -2,25 +2,36 @@ import SwiftUI
 import Firebase
 import SDWebImageSwiftUI
 import FirebaseFirestore
+import Foundation
+// ChatUserの定義
 struct ChatUser {
     let uid, email, profileImageUrl: String
-}
-class MainMessagesViewModel: ObservableObject {
     
+    init(data: [String: Any]) {
+        self.uid = data["uid"] as? String ?? ""
+        self.email = data["email"] as? String ?? ""
+        self.profileImageUrl = data["profileImageUrl"] as? String ?? ""
+    }
+}
+
+// MainMessagesViewModelの定義
+class MainMessagesViewModel: ObservableObject {
     @Published var errorMessage = ""
     @Published var chatUser: ChatUser?
+    @Published var isUserCurrentlyLoggedOut = false
     
     init() {
+        DispatchQueue.main.async {
+            self.isUserCurrentlyLoggedOut = Auth.auth().currentUser?.uid == nil
+        }
         fetchCurrentUser()
     }
     
-    private func fetchCurrentUser() {
-        
+    func fetchCurrentUser() {
         guard let uid = Auth.auth().currentUser?.uid else {
             self.errorMessage = "Could not find firebase uid"
             return
         }
-        
         
         Firestore.firestore().collection("users").document(uid).getDocument { snapshot, error in
             if let error = error {
@@ -29,37 +40,29 @@ class MainMessagesViewModel: ObservableObject {
                 return
             }
             
-            //            self.errorMessage = "123"
-            
             guard let data = snapshot?.data() else {
                 self.errorMessage = "No data found"
                 return
-                
             }
-            //            self.errorMessage = "Data: \(data.description)"
-            let uid = data["uid"] as? String ?? ""
-            let email = data["email"] as? String ?? ""
-            let profileImageUrl = data["profileImageUrl"] as? String ?? ""
-            self.chatUser = ChatUser(uid: uid, email: email, profileImageUrl: profileImageUrl)
             
-            //            self.errorMessage = chatUser.profileImageUrl
-            
+            self.chatUser = ChatUser(data: data)
         }
     }
     
+    func handleSignOut() {
+        isUserCurrentlyLoggedOut.toggle()
+        try? Auth.auth().signOut()
+    }
 }
+
+// MainMessagesViewの定義
 struct MainMessagesView: View {
-    
     @State var shouldShowLogOutOptions = false
-    
     @ObservedObject private var vm = MainMessagesViewModel()
     
     var body: some View {
         NavigationView {
-            
             VStack {
-                //                Text("User: \(vm.chatUser?.uid ?? "")")
-                
                 customNavBar
                 messagesView
             }
@@ -71,7 +74,6 @@ struct MainMessagesView: View {
     
     private var customNavBar: some View {
         HStack(spacing: 16) {
-            
             WebImage(url: URL(string: vm.chatUser?.profileImageUrl ?? ""))
                 .resizable()
                 .scaledToFill()
@@ -82,7 +84,6 @@ struct MainMessagesView: View {
                     .stroke(Color(.label), lineWidth: 1)
                 )
                 .shadow(radius: 5)
-            
             
             VStack(alignment: .leading, spacing: 4) {
                 let email = vm.chatUser?.email.replacingOccurrences(of: "@gmail.com", with: "") ?? ""
@@ -97,7 +98,6 @@ struct MainMessagesView: View {
                         .font(.system(size: 12))
                         .foregroundColor(Color(.lightGray))
                 }
-                
             }
             
             Spacer()
@@ -114,10 +114,16 @@ struct MainMessagesView: View {
             .init(title: Text("Settings"), message: Text("What do you want to do?"), buttons: [
                 .destructive(Text("Sign Out"), action: {
                     print("handle sign out")
-                    
+                    vm.handleSignOut()
                 }),
                 .cancel()
             ])
+        }
+        .fullScreenCover(isPresented: $vm.isUserCurrentlyLoggedOut, onDismiss: nil) {
+            LoginView(didCompleteLoginProcess: {
+                self.vm.isUserCurrentlyLoggedOut = false
+                self.vm.fetchCurrentUser()
+            })
         }
     }
     
@@ -132,7 +138,6 @@ struct MainMessagesView: View {
                             .overlay(RoundedRectangle(cornerRadius: 44)
                                 .stroke(Color(.label), lineWidth: 1)
                             )
-                        
                         
                         VStack(alignment: .leading) {
                             Text("Username")
@@ -149,7 +154,6 @@ struct MainMessagesView: View {
                     Divider()
                         .padding(.vertical, 8)
                 }.padding(.horizontal)
-                
             }.padding(.bottom, 50)
         }
     }
@@ -178,6 +182,7 @@ struct MainMessagesView_Previews: PreviewProvider {
     static var previews: some View {
         MainMessagesView()
             .preferredColorScheme(.dark)
+        
         MainMessagesView()
     }
 }

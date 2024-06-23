@@ -20,6 +20,7 @@ import FirebaseFirestore
 //}
 
 struct LoginView: View {
+    let didCompleteLoginProcess: () -> ()
     
     @State private var isLoginMode = false
     @State private var email = ""
@@ -124,6 +125,10 @@ struct LoginView: View {
     }
     @State var loginStatusMessage = ""
     private func createNewAccount() {
+        if self.image == nil {
+            self.loginStatusMessage = "You must select an avatar image"
+            return
+        }
         Auth.auth().createUser(withEmail: email, password: password) {
             result, err in
             if let err = err {
@@ -147,7 +152,8 @@ struct LoginView: View {
             }
             print("ログインしました: \(result?.user.uid ?? "")")
             self.loginStatusMessage = "ログインしました: \(result?.user.uid ?? "")"
-            
+            self.didCompleteLoginProcess()
+
         }
     }
         private func persistImageToStorage() {
@@ -187,12 +193,15 @@ struct LoginView: View {
                     return
                 }
                 print("Success")
+                self.didCompleteLoginProcess()
             }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        LoginView(didCompleteLoginProcess: {
+            
+        })
     }
 }
