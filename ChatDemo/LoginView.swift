@@ -20,6 +20,7 @@ import FirebaseFirestore
 //}
 
 struct LoginView: View {
+    
     @State private var isLoginMode = false
     @State private var email = ""
     @State private var password = ""
