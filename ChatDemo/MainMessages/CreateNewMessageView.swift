@@ -7,6 +7,18 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import Firebase
+import FirebaseFirestore
+import Foundation
+//struct ChatUser {
+//    let uid, email, profileImageUrl: String
+//
+//    init(data: [String: Any]) {
+//        self.uid = data["uid"] as? String ?? ""
+//        self.email = data["email"] as? String ?? ""
+//        self.profileImageUrl = data["profileImageUrl"] as? String ?? ""
+//    }
+//}
 
 class CreateNewMessageViewModel: ObservableObject {
     
@@ -18,7 +30,7 @@ class CreateNewMessageViewModel: ObservableObject {
     }
     
     private func fetchAllUsers() {
-        FirebaseManager.shared.firestore.collection("users")
+        Firestore.firestore().collection("users")
             .getDocuments { documentsSnapshot, error in
                 if let error = error {
                     self.errorMessage = "Failed to fetch users: \(error)"
@@ -29,7 +41,7 @@ class CreateNewMessageViewModel: ObservableObject {
                 documentsSnapshot?.documents.forEach({ snapshot in
                     let data = snapshot.data()
                     let user = ChatUser(data: data)
-                    if user.uid != FirebaseManager.shared.auth.currentUser?.uid {
+                    if user.uid != Auth.auth().currentUser?.uid {
                         self.users.append(.init(data: data))
                     }
                     
@@ -90,7 +102,7 @@ struct CreateNewMessageView: View {
 
 struct CreateNewMessageView_Previews: PreviewProvider {
     static var previews: some View {
-//        CreateNewMessageView()
-        MainMessagesView()
+        CreateNewMessageView()
+//        MainMessagesView()
     }
 }
