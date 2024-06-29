@@ -6,18 +6,18 @@ import Foundation
 // ChatUserの定義
 
 
-struct ChatUser: Identifiable {
-    
-    var id: String { uid }
-    
-    let uid, email, profileImageUrl: String
-    
-    init(data: [String: Any]) {
-        self.uid = data["uid"] as? String ?? ""
-        self.email = data["email"] as? String ?? ""
-        self.profileImageUrl = data["profileImageUrl"] as? String ?? ""
-    }
-}
+//struct ChatUser: Identifiable {
+//
+//    var id: String { uid }
+//
+//    let uid, email, profileImageUrl: String
+//
+//    init(data: [String: Any]) {
+//        self.uid = data["uid"] as? String ?? ""
+//        self.email = data["email"] as? String ?? ""
+//        self.profileImageUrl = data["profileImageUrl"] as? String ?? ""
+//    }
+//}
 
 // MainMessagesViewModelの定義
 class MainMessagesViewModel: ObservableObject {
@@ -63,6 +63,8 @@ class MainMessagesViewModel: ObservableObject {
 // MainMessagesViewの定義
 struct MainMessagesView: View {
     @State var shouldShowLogOutOptions = false
+    @State var shouldNavigateToChatLogView = false
+    
     @ObservedObject private var vm = MainMessagesViewModel()
     
     var body: some View {
@@ -70,6 +72,9 @@ struct MainMessagesView: View {
             VStack {
                 customNavBar
                 messagesView
+                NavigationLink("", isActive: $shouldNavigateToChatLogView) {
+                    ChatLogView(chatUser: self.chatUser)
+                }
             }
             .overlay(
                 newMessageButton, alignment: .bottom)
@@ -136,26 +141,32 @@ struct MainMessagesView: View {
         ScrollView {
             ForEach(0..<10, id: \.self) { num in
                 VStack {
-                    HStack(spacing: 16) {
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 32))
-                            .padding(8)
-                            .overlay(RoundedRectangle(cornerRadius: 44)
-                                .stroke(Color(.label), lineWidth: 1)
-                            )
-                        
-                        VStack(alignment: .leading) {
-                            Text("Username")
-                                .font(.system(size: 16, weight: .bold))
-                            Text("Message sent to user")
-                                .font(.system(size: 14))
-                                .foregroundColor(Color(.lightGray))
+                    NavigationLink {
+                        Text("asdfasdf")
+                    } label: {
+                        HStack(spacing: 16) {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 32))
+                                .padding(8)
+                                .overlay(RoundedRectangle(cornerRadius: 44)
+                                    .stroke(Color(.label), lineWidth: 1)
+                                )
+                            
+                            VStack(alignment: .leading) {
+                                Text("Username")
+                                    .font(.system(size: 16, weight: .bold))
+                                Text("Message sent to user")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Color(.lightGray))
+                            }
+                            Spacer()
+                            
+                            Text("22d")
+                                .font(.system(size: 14, weight: .semibold))
                         }
-                        Spacer()
-                        
-                        Text("22d")
-                            .font(.system(size: 14, weight: .semibold))
                     }
+
+                 
                     Divider()
                         .padding(.vertical, 8)
                 }.padding(.horizontal)
@@ -183,11 +194,29 @@ struct MainMessagesView: View {
             .shadow(radius: 15)
         }
         .fullScreenCover(isPresented: $shouldShowNewMessageScreen) {
-            CreateNewMessageView()
-//            Text("+ New Message")
+            CreateNewMessageView(didSelectNewUser: { user in
+                print(user.email)
+                self.shouldNavigateToChatLogView.toggle()
+                self.chatUser = user
+            })
         }
     }
+    
+    @State var chatUser: ChatUser?
 }
+//struct ChatLogView: View {
+//    
+//    let chatUser: ChatUser?
+//    
+//    var body: some View {
+//        ScrollView {
+//            ForEach(0..<10) { num in
+//                Text("FAKE MESSAGE FOR NOW")
+//            }
+//        }.navigationTitle(chatUser?.email ?? "")
+//            .navigationBarTitleDisplayMode(.inline)
+//    }
+//}
 
 struct MainMessagesView_Previews: PreviewProvider {
     static var previews: some View {
