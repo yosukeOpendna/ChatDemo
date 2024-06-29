@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseStorage
+import FirebaseFirestore
 @main
 struct ChatDemoApp: App {
     init() {
