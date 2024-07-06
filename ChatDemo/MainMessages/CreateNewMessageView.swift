@@ -39,10 +39,9 @@ class CreateNewMessageViewModel: ObservableObject {
                 }
                 
                 documentsSnapshot?.documents.forEach({ snapshot in
-                    let data = snapshot.data()
-                    let user = ChatUser(data: data)
-                    if user.uid != Auth.auth().currentUser?.uid {
-                        self.users.append(.init(data: data))
+                    let user = try? snapshot.data(as: ChatUser.self)
+                    if user?.uid != Auth.auth().currentUser?.uid {
+                        self.users.append(user!)
                     }
                     
                 })

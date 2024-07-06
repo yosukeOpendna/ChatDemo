@@ -30,9 +30,54 @@ class MainMessagesViewModel: ObservableObject {
             self.isUserCurrentlyLoggedOut = Auth.auth().currentUser?.uid == nil
         }
         fetchCurrentUser()
+        
+        fetchRecentMessages()
     }
+    @Published var recentMessages = [RecentMessage]()
     
-    func fetchCurrentUser() {
+    private var firestoreListener: ListenerRegistration?
+    
+    
+    func fetchRecentMessages() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        firestoreListener?.remove()
+        self.recentMessages.removeAll()
+        
+        firestoreListener = Firestore.firestore()
+            .collection(FirebaseConstants.recentMessages)
+            .document(uid)
+            .collection(FirebaseConstants.messages)
+            .order(by: FirebaseConstants.timestamp)
+            .addSnapshotListener { querySnapshot, error in
+                if let error = error {
+                    self.errorMessage = "Failed to listen for recent messages: \(error)"
+                    print(error)
+                    return
+                }
+                
+                querySnapshot?.documentChanges.forEach({ change in
+                    let docId = change.document.documentID
+                    
+                    if let index = self.recentMessages.firstIndex(where: { rm in
+                        return rm.id == docId
+                    }) {
+                        self.recentMessages.remove(at: index)
+                    }
+                    
+                    do {
+                        if let rm = try change.document.data(as: RecentMessage?.self) {
+                            self.recentMessages.insert(rm, at: 0)
+                        }
+                    } catch {
+                        print(error)
+                    }
+                })
+            }
+    }
+
+    
+  func fetchCurrentUser() {
         guard let uid = Auth.auth().currentUser?.uid else {
             self.errorMessage = "Could not find firebase uid"
             return
@@ -45,12 +90,13 @@ class MainMessagesViewModel: ObservableObject {
                 return
             }
             
-            guard let data = snapshot?.data() else {
+            guard (snapshot?.data()) != nil else {
                 self.errorMessage = "No data found"
                 return
             }
             
-            self.chatUser = ChatUser(data: data)
+            self.chatUser = try? snapshot?.data(as: ChatUser.self)
+            FirebaseManager.shared.currentUser = self.chatUser
         }
     }
     
@@ -133,40 +179,49 @@ struct MainMessagesView: View {
             LoginView(didCompleteLoginProcess: {
                 self.vm.isUserCurrentlyLoggedOut = false
                 self.vm.fetchCurrentUser()
+                self.vm.fetchRecentMessages()
+                
             })
         }
     }
     
     private var messagesView: some View {
         ScrollView {
-            ForEach(0..<10, id: \.self) { num in
+            ForEach(vm.recentMessages) { recentMessage in
                 VStack {
                     NavigationLink {
                         Text("asdfasdf")
                     } label: {
                         HStack(spacing: 16) {
-                            Image(systemName: "person.fill")
-                                .font(.system(size: 32))
-                                .padding(8)
-                                .overlay(RoundedRectangle(cornerRadius: 44)
-                                    .stroke(Color(.label), lineWidth: 1)
-                                )
+                            WebImage(url: URL(string: recentMessage.profileImageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 64, height: 64)
+                                .clipped()
+                                .cornerRadius(64)
+                                .overlay(RoundedRectangle(cornerRadius: 64)
+                                    .stroke(Color.black, lineWidth: 1))
+                                .shadow(radius: 5)
                             
-                            VStack(alignment: .leading) {
-                                Text("Username")
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(recentMessage.email)
                                     .font(.system(size: 16, weight: .bold))
-                                Text("Message sent to user")
+                                    .multilineTextAlignment(.leading)
+                                Text(recentMessage.text)
                                     .font(.system(size: 14))
-                                    .foregroundColor(Color(.lightGray))
+                                    .foregroundColor(Color(.darkGray))
+                                    .multilineTextAlignment(.leading)
                             }
                             Spacer()
                             
-                            Text("22d")
+                            Text(recentMessage.timeAgo)
                                 .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(Color(.label))
                         }
                     }
-
-                 
+                    
+                    
                     Divider()
                         .padding(.vertical, 8)
                 }.padding(.horizontal)
@@ -211,7 +266,7 @@ struct MainMessagesView: View {
 //    var body: some View {
 //        ScrollView {
 //            ForEach(0..<10) { num in
-//                Text("FAKE MESSAGE FOR NOW")
+//                Text("FAKE MESSAGE FO NOW")
 //            }
 //        }.navigationTitle(chatUser?.email ?? "")
 //            .navigationBarTitleDisplayMode(.inline)
