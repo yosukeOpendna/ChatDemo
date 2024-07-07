@@ -118,7 +118,7 @@ struct MainMessagesView: View {
     var body: some View {
         NavigationView {
             VStack {
-                customNavBar
+//                customNavBar
                 messagesView
                 NavigationLink("", isActive: $shouldNavigateToChatLogView) {
                     ChatLogView(vm: chatLogViewModel)
@@ -126,66 +126,71 @@ struct MainMessagesView: View {
             }
             .overlay(
                 newMessageButton, alignment: .bottom)
-            .navigationBarHidden(true)
-        }
-    }
-    
-    private var customNavBar: some View {
-        HStack(spacing: 16) {
-            WebImage(url: URL(string: vm.chatUser?.profileImageUrl ?? ""))
-                .resizable()
-                .scaledToFill()
-                .frame(width: 50, height: 50)
-                .clipped()
-                .cornerRadius(50)
-                .overlay(RoundedRectangle(cornerRadius: 44)
-                    .stroke(Color(.label), lineWidth: 1)
-                )
-                .shadow(radius: 5)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                let email = vm.chatUser?.email.replacingOccurrences(of: "@gmail.com", with: "") ?? ""
-                Text(email)
-                    .font(.system(size: 24, weight: .bold))
-                
-                HStack {
-                    Circle()
-                        .foregroundColor(.green)
-                        .frame(width: 14, height: 14)
-                    Text("online")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color(.lightGray))
-                }
-            }
-            
-            Spacer()
-            Button {
-                shouldShowLogOutOptions.toggle()
-            } label: {
-                Image(systemName: "gear")
+//            .navigationBarHidden(true)
+            .navigationBarItems(trailing: NavigationLink(destination: SettingsView()) {
+                Image(systemName: "gearshape.fill")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Color(.label))
-            }
-        }
-        .padding()
-        .actionSheet(isPresented: $shouldShowLogOutOptions) {
-            .init(title: Text("Settings"), message: Text("What do you want to do?"), buttons: [
-                .destructive(Text("Sign Out"), action: {
-                    print("handle sign out")
-                    vm.handleSignOut()
-                }),
-                .cancel()
-            ])
-        }
-        .fullScreenCover(isPresented: $vm.isUserCurrentlyLoggedOut, onDismiss: nil) {
-            LoginView(didCompleteLoginProcess: {
-                self.vm.isUserCurrentlyLoggedOut = false
-                self.vm.fetchCurrentUser()
-                self.vm.fetchRecentMessages()
-                
             })
         }
     }
+//    private var customNavbar: some view
+//    private var customNavBar: some View {
+//        HStack(spacing: 16) {
+//            WebImage(url: URL(string: vm.chatUser?.profileImageUrl ?? ""))
+//                .resizable()
+//                .scaledToFill()
+//                .frame(width: 50, height: 50)
+//                .clipped()
+//                .cornerRadius(50)
+//                .overlay(RoundedRectangle(cornerRadius: 44)
+//                    .stroke(Color(.label), lineWidth: 1)
+//                )
+//                .shadow(radius: 5)
+//            
+//            VStack(alignment: .leading, spacing: 4) {
+//                let email = vm.chatUser?.email.replacingOccurrences(of: "@gmail.com", with: "") ?? ""
+//                Text(email)
+//                    .font(.system(size: 24, weight: .bold))
+//                
+//                HStack {
+//                    Circle()
+//                        .foregroundColor(.green)
+//                        .frame(width: 14, height: 14)
+//                    Text("online")
+//                        .font(.system(size: 12))
+//                        .foregroundColor(Color(.lightGray))
+//                }
+//            }
+//            
+//            Spacer()
+//            Button {
+//                shouldShowLogOutOptions.toggle()
+//            } label: {
+//                Image(systemName: "gear")
+//                    .font(.system(size: 24, weight: .bold))
+//                    .foregroundColor(Color(.label))
+//            }
+//        }
+//        .padding()
+//        .actionSheet(isPresented: $shouldShowLogOutOptions) {
+//            .init(title: Text("Settings"), message: Text("What do you want to do?"), buttons: [
+//                .destructive(Text("Sign Out"), action: {
+//                    print("handle sign out")
+//                    vm.handleSignOut()
+//                }),
+//                .cancel()
+//            ])
+//        }
+//        .fullScreenCover(isPresented: $vm.isUserCurrentlyLoggedOut, onDismiss: nil) {
+//            LoginView(didCompleteLoginProcess: {
+//                self.vm.isUserCurrentlyLoggedOut = false
+//                self.vm.fetchCurrentUser()
+//                self.vm.fetchRecentMessages()
+//                
+//            })
+//        }
+//    }
     
     private var messagesView: some View {
         ScrollView {
