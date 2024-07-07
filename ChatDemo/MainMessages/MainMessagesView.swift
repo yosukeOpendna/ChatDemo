@@ -113,13 +113,15 @@ struct MainMessagesView: View {
     
     @ObservedObject private var vm = MainMessagesViewModel()
     
+    private var chatLogViewModel = ChatLogViewModel(chatUser: nil)
+    
     var body: some View {
         NavigationView {
             VStack {
                 customNavBar
                 messagesView
                 NavigationLink("", isActive: $shouldNavigateToChatLogView) {
-                    ChatLogView(chatUser: self.chatUser)
+                    ChatLogView(vm: chatLogViewModel)
                 }
             }
             .overlay(
@@ -189,8 +191,14 @@ struct MainMessagesView: View {
         ScrollView {
             ForEach(vm.recentMessages) { recentMessage in
                 VStack {
-                    NavigationLink {
-                        Text("asdfasdf")
+                    Button {
+                        let uid = Auth.auth().currentUser?.uid == recentMessage.fromId ? recentMessage.toId : recentMessage.fromId
+                        
+                        self.chatUser = .init(id: uid, uid: uid, email: recentMessage.email, profileImageUrl: recentMessage.profileImageUrl)
+                        
+                        self.chatLogViewModel.chatUser = self.chatUser
+                        self.chatLogViewModel.fetchMessages()
+                        self.shouldNavigateToChatLogView.toggle()
                     } label: {
                         HStack(spacing: 16) {
                             WebImage(url: URL(string: recentMessage.profileImageUrl))
@@ -205,8 +213,9 @@ struct MainMessagesView: View {
                             
                             
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(recentMessage.email)
+                                Text(recentMessage.username)
                                     .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(Color(.label))
                                     .multilineTextAlignment(.leading)
                                 Text(recentMessage.text)
                                     .font(.system(size: 14))
@@ -222,9 +231,11 @@ struct MainMessagesView: View {
                     }
                     
                     
+                    
                     Divider()
                         .padding(.vertical, 8)
                 }.padding(.horizontal)
+                
             }.padding(.bottom, 50)
         }
     }
@@ -253,6 +264,8 @@ struct MainMessagesView: View {
                 print(user.email)
                 self.shouldNavigateToChatLogView.toggle()
                 self.chatUser = user
+                self.chatLogViewModel.chatUser = user
+                self.chatLogViewModel.fetchMessages()
             })
         }
     }

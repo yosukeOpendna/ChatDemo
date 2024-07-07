@@ -23,7 +23,7 @@ class ChatLogViewModel: ObservableObject {
     
     @Published var chatMessages = [ChatMessage]()
     
-    let chatUser: ChatUser?
+    var chatUser: ChatUser?
     
     init(chatUser: ChatUser?) {
         self.chatUser = chatUser
@@ -31,14 +31,18 @@ class ChatLogViewModel: ObservableObject {
         fetchMessages()
     }
     
+    var firestoreListener: ListenerRegistration?
+    
     func fetchMessages() {
         guard let fromId = Auth.auth().currentUser?.uid else { return }
         guard let toId = chatUser?.uid else { return }
-       Firestore.firestore()
-            .collection("messages")
+        firestoreListener?.remove()
+        chatMessages.removeAll()
+        firestoreListener = Firestore.firestore()
+            .collection(FirebaseConstants.messages)
             .document(fromId)
             .collection(toId)
-            .order(by: "timestamp")
+            .order(by: FirebaseConstants.timestamp)
             .addSnapshotListener { querySnapshot, error in
                 if let error = error {
                     self.errorMessage = "Failed to listen for messages: \(error)"
@@ -58,12 +62,13 @@ class ChatLogViewModel: ObservableObject {
                         }
                     }
                 })
+                
                 DispatchQueue.main.async {
                     self.count += 1
                 }
-
             }
     }
+    
     
     func handleSend() {
         print(chatText)
@@ -167,13 +172,13 @@ class ChatLogViewModel: ObservableObject {
 
 struct ChatLogView: View {
     
-    let chatUser: ChatUser?
-    
-    init(chatUser: ChatUser?) {
-        self.chatUser = chatUser
-        self.vm = .init(chatUser: chatUser)
-    }
-    
+//    let chatUser: ChatUser?
+//
+//    init(chatUser: ChatUser?) {
+//        self.chatUser = chatUser
+//        self.vm = .init(chatUser: chatUser)
+//    }
+//
     @ObservedObject var vm: ChatLogViewModel
     
     var body: some View {
@@ -181,8 +186,11 @@ struct ChatLogView: View {
             messagesView
             Text(vm.errorMessage)
         }
-        .navigationTitle(chatUser?.email ?? "")
+        .navigationTitle(vm.chatUser?.email ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .onDisappear {
+            vm.firestoreListener?.remove()
+        }
     }
     
     private var messagesView: some View {
